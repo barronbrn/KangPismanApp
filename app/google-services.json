@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "947076648859",
+    "project_id": "kangpisman-app",
+    "storage_bucket": "kangpisman-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947076648859:android:39f9746c9ca58585495b3e",
+        "android_client_info": {
+          "package_name": "com.example.kangpismanapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPDChxQBlQww56-3l839zq8tZ-Ri_l5SU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
