@@ -12,7 +12,12 @@
           "package_name": "com.example.kangpismanapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "947076648859-ms041edj8omsgfie7tklnu0349nbcopa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCPDChxQBlQww56-3l839zq8tZ-Ri_l5SU"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "947076648859-ms041edj8omsgfie7tklnu0349nbcopa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
