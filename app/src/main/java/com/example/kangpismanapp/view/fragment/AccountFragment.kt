@@ -11,8 +11,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.kangpismanapp.R
+import com.example.kangpismanapp.util.DialogUtils
 import com.example.kangpismanapp.view.activity.LoginActivity
 import com.example.kangpismanapp.viewmodel.ProfileViewModel
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,16 +54,18 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
     }
 
     private fun observeViewModel() {
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            profileContent.visibility = if (isLoading) View.INVISIBLE else View.VISIBLE
-        }
-
         viewModel.userProfile.observe(viewLifecycleOwner) { profile ->
-            profile?.let {
-                textUserEmail.text = it.email
+            progressBar.visibility = View.GONE
+
+            if (profile != null) {
+                // Tampilkan konten jika profil tidak null
+                profileContent.visibility = View.VISIBLE
+                textUserEmail.text = profile.email
                 val formatRupiah = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
-                textTotalPoin.text = formatRupiah.format(it.totalPoin)
+                textTotalPoin.text = formatRupiah.format(profile.totalPoin)
+            } else {
+                // Sembunyikan konten jika profil null (misal: error)
+                profileContent.visibility = View.INVISIBLE
             }
         }
     }

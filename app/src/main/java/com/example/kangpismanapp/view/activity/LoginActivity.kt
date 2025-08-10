@@ -155,9 +155,12 @@ class LoginActivity : AppCompatActivity() {
         userRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists() && document.contains("role")) {
+                    // PENGGUNA LAMA: Ambil perannya dari dokumen
+                    val role = document.getString("role") ?: "warga" // Ambil peran, default ke warga
                     Toast.makeText(this, "Login Berhasil.", Toast.LENGTH_SHORT).show()
-                    goToMainActivity()
+                    goToMainActivity(role)
                 } else {
+                    // PENGGUNA BARU: Arahkan ke halaman Pilih Peran
                     Toast.makeText(this, "Selamat datang! Silakan pilih peran Anda.", Toast.LENGTH_LONG).show()
                     val intent = Intent(this, PilihPeranActivity::class.java)
                     startActivity(intent)
@@ -169,8 +172,9 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun goToMainActivity() {
+    private fun goToMainActivity(role: String) {
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("USER_ROLE", role)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()

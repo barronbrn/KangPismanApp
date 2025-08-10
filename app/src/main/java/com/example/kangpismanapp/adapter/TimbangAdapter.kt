@@ -9,31 +9,27 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kangpismanapp.R
 import com.example.kangpismanapp.data.model.ItemTransaksi
-import java.text.NumberFormat
-import java.util.Locale
 
-class TimbangAdapter : ListAdapter<ItemTransaksi, TimbangAdapter.TimbangViewHolder>(DiffCallback()) {
+class TimbangAdapter : ListAdapter<ItemTransaksi, TimbangAdapter.ViewHolder>(DiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimbangViewHolder {
-        return TimbangViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_timbang, parent, false)
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_timbang, parent, false)
+        return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: TimbangViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class TimbangViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val namaMaterial: TextView = itemView.findViewById(R.id.text_nama_material)
-        private val detailTimbang: TextView = itemView.findViewById(R.id.text_detail_timbang)
-        private val subtotal: TextView = itemView.findViewById(R.id.text_subtotal)
-        private val formatRupiah = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+        private val hargaPerKg: TextView = itemView.findViewById(R.id.text_harga_per_kg)
+        private val beratEstimasi: TextView = itemView.findViewById(R.id.text_berat_estimasi)
 
         fun bind(item: ItemTransaksi) {
             namaMaterial.text = item.namaMaterial
-            detailTimbang.text = "${item.beratKg} kg x ${formatRupiah.format(item.hargaPerKg)}"
-            subtotal.text = formatRupiah.format(item.subtotal)
+            hargaPerKg.text = "Rp ${item.hargaPerKg}/kg"
+            beratEstimasi.text = "${item.beratKg} kg"
         }
     }
 

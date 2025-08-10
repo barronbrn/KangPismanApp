@@ -5,33 +5,37 @@
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingHorizontal="16dp"
-    android:paddingVertical="8dp">
+    android:paddingVertical="12dp">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/text_nama_material"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Kardus"
             android:textAppearance="?attr/textAppearanceTitleMedium" />
+
         <TextView
-            android:id="@+id/text_detail_timbang"
+            android:id="@+id/text_harga_per_kg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2.5 kg x Rp 1.500"
-            android:textAppearance="?attr/textAppearanceBodySmall" />
+            android:text="Rp 1.500/kg"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/text_subtotal"
+        android:id="@+id/text_berat_estimasi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rp 3.750"
-        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:minWidth="80dp"
+        android:text="2.5 kg"
+        android:textAlignment="textEnd"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
         android:textStyle="bold" />
-
 </LinearLayout>

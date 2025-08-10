@@ -8,13 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.kangpismanapp.data.model.Sampah
 import com.example.kangpismanapp.data.model.Transaksi
 import com.example.kangpismanapp.data.repository.TimbangRepository
+import com.example.kangpismanapp.data.model.DraftTransaksi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TimbangViewModel @Inject constructor() : ViewModel() {
-    private val repository = TimbangRepository()
+class TimbangViewModel @Inject constructor(
+    private val repository: TimbangRepository
+) : ViewModel() {
 
     private val _daftarMaterial = MutableLiveData<List<Sampah>>()
     val daftarMaterial: LiveData<List<Sampah>> = _daftarMaterial
@@ -22,15 +24,22 @@ class TimbangViewModel @Inject constructor() : ViewModel() {
     private val _isTransaksiSaved = MutableLiveData<Boolean>()
     val isTransaksiSaved: LiveData<Boolean> = _isTransaksiSaved
 
+    private val _draftTransaksi = MutableLiveData<DraftTransaksi?>()
+    val draftTransaksi: LiveData<DraftTransaksi?> = _draftTransaksi
+
     init {
         fetchDaftarMaterial()
     }
 
     private fun fetchDaftarMaterial() {
         viewModelScope.launch {
-            val data = repository.getDaftarMaterial()
-            Log.d("APP_DEBUG_TIMBANG", "ViewModel: Menerima ${data.size} item material dari Repository.") // LOG 4
-            _daftarMaterial.value = data
+            _daftarMaterial.value = repository.getDaftarMaterial()
+        }
+    }
+
+    fun loadDraftTransaksi(draftId: String) {
+        viewModelScope.launch {
+            _draftTransaksi.value = repository.getDraftById(draftId)
         }
     }
 
@@ -39,5 +48,15 @@ class TimbangViewModel @Inject constructor() : ViewModel() {
             val success = repository.simpanTransaksi(transaksi)
             _isTransaksiSaved.value = success
         }
+    }
+
+    fun updateDraftStatus(draftId: String, status: String) {
+        viewModelScope.launch {
+            repository.updateDraftStatus(draftId, status)
+        }
+    }
+
+    fun clearDraft() {
+        _draftTransaksi.value = null
     }
 }

@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kangpismanapp.R
 import com.example.kangpismanapp.adapter.TransaksiAdapter
+import com.example.kangpismanapp.util.DialogUtils
 import com.example.kangpismanapp.viewmodel.TransaksiViewModel
+import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +28,7 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
 
         recyclerView = view.findViewById(R.id.recyclerViewHistory)
         progressBar = view.findViewById(R.id.progressBarHistory)
-        emptyStateView = view.findViewById(R.id.empty_state_view) // <-- Inisialisasi
+        emptyStateView = view.findViewById(R.id.empty_state_view)
 
         setupRecyclerView()
         observeViewModel()
@@ -41,18 +43,16 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
     }
 
     private fun observeViewModel() {
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        }
-
         viewModel.transaksiList.observe(viewLifecycleOwner) { list ->
+            // Sembunyikan ProgressBar saat data (meskipun kosong) diterima.
+            progressBar.visibility = View.GONE
 
             if (list.isNullOrEmpty()) {
-
+                // Jika daftar kosong, tampilkan pesan
                 recyclerView.visibility = View.GONE
                 emptyStateView.visibility = View.VISIBLE
             } else {
-
+                // Jika ada data, tampilkan RecyclerView
                 recyclerView.visibility = View.VISIBLE
                 emptyStateView.visibility = View.GONE
                 transaksiAdapter.submitList(list)

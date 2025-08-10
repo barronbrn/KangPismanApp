@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_nama_material_draft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kardus"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/text_berat_draft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estimasi: 1.0 kg"/>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/button_delete_draft_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_delete"
+        android:contentDescription="Hapus item"/>
+
+</LinearLayout>

@@ -8,8 +8,10 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kangpismanapp.R
 import com.example.kangpismanapp.adapter.RewardAdapter
+import com.example.kangpismanapp.util.DialogUtils
 import com.example.kangpismanapp.viewmodel.ProfileViewModel
 import com.example.kangpismanapp.viewmodel.RewardViewModel
+import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

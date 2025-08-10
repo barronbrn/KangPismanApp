@@ -11,30 +11,31 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HargaViewModel @Inject constructor() : ViewModel(){
-    private val repository = HargaRepository()
+class HargaViewModel @Inject constructor(private val repository: HargaRepository) : ViewModel(){
 
     private val _daftarHarga = MutableLiveData<List<Sampah>>()
     val daftarHarga: LiveData<List<Sampah>> = _daftarHarga
 
-    // Tambahan: LiveData untuk status loading
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _semuaDaftarHarga = MutableLiveData<List<Sampah>>()
+    val semuaDaftarHarga: LiveData<List<Sampah>> = _semuaDaftarHarga
+
+    fun fetchSemuaDaftarHarga() {
+        viewModelScope.launch {
+            _semuaDaftarHarga.value = repository.getAllDaftarHarga()
+        }
+    }
 
     init {
         loadDaftarHarga()
     }
 
     private fun loadDaftarHarga() {
-        // Jalankan coroutine yang terikat dengan siklus hidup ViewModel
         viewModelScope.launch {
-            // Tampilkan loading indicator
             _isLoading.value = true
-            // Panggil suspend function dari repository
-            val data = repository.getDaftarHarga()
-            // Update LiveData dengan data yang didapat
-            _daftarHarga.value = data
-            // Sembunyikan loading indicator
+            _daftarHarga.value = repository.getDaftarHarga()
             _isLoading.value = false
         }
     }

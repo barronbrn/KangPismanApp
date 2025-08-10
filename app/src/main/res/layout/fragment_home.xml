@@ -1,234 +1,262 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="?attr/colorSurfaceVariant"
     tools:context=".view.fragment.HomeFragment">
 
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="42dp"
+        app:title="Beranda"
+        app:titleCentered="true" />
 
-        <com.google.android.material.card.MaterialCardView
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardBackgroundColor="?attr/colorPrimary"
-            app:cardCornerRadius="16dp">
+            android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:layout_margin="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
 
-                <TextView
-                    android:id="@+id/label_saldo"
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Saldo Tersedia"
-                    android:textColor="?attr/colorOnPrimary"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:background="@drawable/gradient_summary_card"
+                    android:padding="24dp">
 
-                <TextView
-                    android:id="@+id/text_saldo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                    android:textColor="?attr/colorOnPrimary"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/label_saldo"
-                    tools:text="Rp 245.000" />
+                    <TextView
+                        android:id="@+id/label_saldo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Saldo Terkumpul"
+                        android:textColor="?attr/colorOnPrimary"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/label_poin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Poin Rewards"
-                    android:textColor="?attr/colorOnPrimary"
-                    app:layout_constraintBottom_toTopOf="@id/text_poin"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:id="@+id/text_saldo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/label_saldo"
+                        tools:text="Rp 0" />
 
-                <TextView
-                    android:id="@+id/text_poin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnPrimary"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:text="1.250 pts" />
+                    <View
+                        android:id="@+id/divider1"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="#66FFFFFF"
+                        app:layout_constraintBottom_toBottomOf="@+id/text_poin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/label_poin" />
 
-                <TextView
-                    android:id="@+id/label_sampah"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sampah Terkumpul"
-                    android:textColor="?attr/colorOnPrimary"
-                    app:layout_constraintBottom_toTopOf="@id/text_sampah"
-                    app:layout_constraintStart_toStartOf="@id/guideline_vertical" />
+                    <TextView
+                        android:id="@+id/label_poin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Poin Rewards"
+                        android:textColor="?attr/colorOnPrimary"
+                        app:layout_constraintTop_toBottomOf="@id/text_saldo"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/text_sampah"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnPrimary"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/guideline_vertical"
-                    tools:text="12.5 kg" />
+                    <TextView
+                        android:id="@+id/text_poin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/label_poin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:text="0 points" />
 
-                <TextView
-                    android:id="@+id/label_qr_timbang"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="QR Timbang"
-                    android:textColor="?attr/colorOnPrimary"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/text_saldo" />
+                    <TextView
+                        android:id="@+id/label_sampah"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="Sampah Terkumpul"
+                        android:textColor="?attr/colorOnPrimary"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/divider1"
+                        app:layout_constraintTop_toTopOf="@id/label_poin" />
 
-                <ImageView
-                    android:id="@+id/icon_qr_timbang"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_qr_scanner"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/label_qr_timbang"
-                    app:tint="?attr/colorOnPrimary" />
+                    <TextView
+                        android:id="@+id/text_sampah"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/label_sampah"
+                        app:layout_constraintStart_toStartOf="@id/label_sampah"
+                        tools:text="0.0 kg" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_vertical"
-                    android:layout_width="wrap_content"
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
+                <LinearLayout style="@style/ActionButtonStyle" android:id="@+id/button_setor_sampah">
+                    <ImageView style="@style/ActionButtonIconStyle" android:backgroundTint="#33006E2C" app:tint="?attr/colorPrimary" android:src="@drawable/ic_setor_sampah"/>
+                    <TextView style="@style/ActionButtonTextStyle" android:text="Setor Sampah"/>
+                </LinearLayout>
+                <LinearLayout style="@style/ActionButtonStyle" android:id="@+id/button_lokasi_bank">
+                    <ImageView style="@style/ActionButtonIconStyle" android:backgroundTint="#330099CC" app:tint="#0000FF" android:src="@drawable/ic_lokasi_bank"/>
+                    <TextView style="@style/ActionButtonTextStyle" android:text="Lokasi Bank"/>
+                </LinearLayout>
+                <LinearLayout style="@style/ActionButtonStyle" android:id="@+id/button_reward">
+                    <ImageView style="@style/ActionButtonIconStyle" android:backgroundTint="#339C27B0" app:tint="#9C27B0" android:src="@drawable/ic_reward"/>
+                    <TextView style="@style/ActionButtonTextStyle" android:text="Reward"/>
+                </LinearLayout>
+                <LinearLayout style="@style/ActionButtonStyle" android:id="@+id/button_edukasi">
+                    <ImageView android:backgroundTint="#33FF8800" style="@style/ActionButtonIconStyle" app:tint="@color/md_theme_error" android:src="@drawable/ic_edukasi"/>
+                    <TextView style="@style/ActionButtonTextStyle" android:text="Edukasi"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_begin="155dp" />
+                    android:padding="16dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Transaksi Terakhir"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:id="@+id/link_lihat_semua_transaksi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="Lihat Semua"
+                            android:textColor="?attr/colorPrimary"/>
+                    </RelativeLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_transaksi_terakhir"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:layout_marginTop="8dp"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/item_transaksi_ringkas" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                style="@style/ActionButtonStyle"
-                android:id="@+id/button_setor_sampah">
-                <ImageView
-                    style="@style/ActionButtonIconStyle"
-                    android:src="@drawable/ic_setor_sampah"/>
-                <TextView
-                    style="@style/ActionButtonTextStyle"
-                    android:text="Setor Sampah"/>
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/ActionButtonStyle"
-                android:id="@+id/button_lokasi_bank">
-                <ImageView
-                    style="@style/ActionButtonIconStyle"
-                    android:src="@drawable/ic_lokasi_bank"/>
-                <TextView
-                    style="@style/ActionButtonTextStyle"
-                    android:text="Lokasi Bank"/>
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/ActionButtonStyle"
-                android:id="@+id/button_reward">
-                <ImageView
-                    style="@style/ActionButtonIconStyle"
-                    android:src="@drawable/ic_reward"/>
-                <TextView
-                    style="@style/ActionButtonTextStyle"
-                    android:text="Reward"/>
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/ActionButtonStyle"
-                android:id="@+id/button_edukasi">
-                <ImageView
-                    style="@style/ActionButtonIconStyle"
-                    android:src="@drawable/ic_edukasi"/>
-                <TextView
-                    style="@style/ActionButtonTextStyle"
-                    android:text="Edukasi"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/top_rounded_background"
-            android:orientation="vertical"
-            android:paddingTop="16dp">
-
-            <RelativeLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Transaksi Terakhir"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/link_lihat_semua_transaksi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="Lihat Semua"
-                    android:textColor="?attr/colorPrimary"/>
-            </RelativeLayout>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_transaksi_terakhir"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false"
-                tools:itemCount="2"
-                tools:listitem="@layout/item_transaksi_ringkas" />
+                android:layout_marginTop="16dp"
 
-            <RelativeLayout
+                app:cardCornerRadius="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Harga Sampah Terkini"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:id="@+id/link_selengkapnya_harga"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="Selengkapnya"
+                            android:textColor="?attr/colorPrimary"/>
+                    </RelativeLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewHarga"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="2"
+                        tools:itemCount="4"
+                        tools:listitem="@layout/item_harga"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:layout_marginTop="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Harga Sampah Terkini"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/link_selengkapnya_harga"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="Selengkapnya"
-                    android:textColor="?attr/colorPrimary"/>
-            </RelativeLayout>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewHarga"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false"
-                android:paddingHorizontal="8dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="2"
-                tools:itemCount="4"
-                tools:listitem="@layout/item_harga"/>
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Edukasi Sampah"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textStyle="bold"/>
+                    </RelativeLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_edukasi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="8dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_artikel" />
+                    <Button
+                        android:id="@+id/button_lihat_semua_edukasi" style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Lihat Artikel Lainnya"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

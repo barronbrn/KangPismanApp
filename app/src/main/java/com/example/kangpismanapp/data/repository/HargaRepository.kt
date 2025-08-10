@@ -13,11 +13,18 @@ class HargaRepository @Inject constructor() {
 
     private val db = Firebase.firestore
 
-    // Fungsi ini sekarang menjadi 'suspend' karena butuh waktu untuk mengambil data
+    suspend fun getAllDaftarHarga(): List<Sampah> {
+        return try {
+            db.collection("harga_material").get().await().toObjects(Sampah::class.java)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     suspend fun getDaftarHarga(): List<Sampah> {
         return try {
             val querySnapshot = db.collection("harga_material")
-                .limit(6)
+                .limit(4)
                 .get().await()
             querySnapshot.toObjects(Sampah::class.java)
         } catch (e: Exception) {

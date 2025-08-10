@@ -7,12 +7,14 @@
     android:orientation="vertical"
     tools:context=".view.fragment.RewardFragment">
 
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_reward"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="42dp"
         app:title="Reward &amp; Penukaran"
-        app:titleCentered="true" />
+        app:titleCentered="true"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -10,9 +10,10 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_history"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:title="Riwayat Penjemputan"
-        app:titleCentered="true" />
+        android:layout_height="42dp"
+        app:title="Riwayat Transaksi"
+        app:titleCentered="true"
+         />
 
     <FrameLayout
         android:layout_width="match_parent"

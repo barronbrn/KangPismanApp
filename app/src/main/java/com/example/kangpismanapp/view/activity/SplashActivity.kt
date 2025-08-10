@@ -13,6 +13,7 @@ import androidx.core.os.postDelayed
 import com.example.kangpismanapp.R
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import java.security.MessageDigest
 import java.util.Base64
 
@@ -23,42 +24,53 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash) // Tampilkan layout splash screen
+        setContentView(R.layout.activity_splash)
 
-        // Ambil komponen ImageView
         val logoImageView: ImageView = findViewById(R.id.logoImageView)
-
-        // Muat dan jalankan animasi fade_in
         val fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in)
         logoImageView.startAnimation(fadeInAnimation)
 
-        // Gunakan Handler untuk menunda eksekusi
         Handler(Looper.getMainLooper()).postDelayed({
-            // Cek status login pengguna setelah durasi splash screen selesai
-            checkUserStatus()
+            decideNextActivity()
         }, splashScreenDuration)
     }
 
-    private fun checkUserStatus() {
+    private fun decideNextActivity() {
         val currentUser = Firebase.auth.currentUser
         if (currentUser != null) {
-            // Jika ada pengguna yang login, langsung ke MainActivity
-            goToMainActivity()
+            fetchUserRoleAndRedirect(currentUser.uid)
         } else {
-            // Jika tidak ada, ke LoginActivity
             goToLoginActivity()
         }
     }
 
-    private fun goToMainActivity() {
+    private fun fetchUserRoleAndRedirect(uid: String) {
+        val db = Firebase.firestore
+        db.collection("users").document(uid).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val role = document.getString("role") ?: "warga"
+                    goToMainActivity(role)
+                } else {
+                    goToLoginActivity()
+                }
+            }
+            .addOnFailureListener {
+                goToMainActivity("warga")
+            }
+    }
+
+
+    private fun goToMainActivity(role: String) {
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("USER_ROLE", role) // Kirim data peran ke MainActivity
         startActivity(intent)
-        finish() // Tutup SplashActivity
+        finish()
     }
 
     private fun goToLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
-        finish() // Tutup SplashActivity
+        finish()
     }
 }

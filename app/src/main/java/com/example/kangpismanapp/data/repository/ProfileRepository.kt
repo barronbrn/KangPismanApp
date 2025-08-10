@@ -3,32 +3,52 @@ package com.example.kangpismanapp.data.repository
 import com.example.kangpismanapp.data.model.UserProfile
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ProfileRepository @Inject constructor(){
+class ProfileRepository @Inject constructor() {
     private val auth = Firebase.auth
     private val db = Firebase.firestore
 
-    suspend fun getUserProfileData(): UserProfile? {
-        val currentUser = auth.currentUser ?: return null
-        val email = currentUser.email ?: "Email tidak ditemukan"
+    fun getUserProfileData(): Flow<UserProfile?> = callbackFlow {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            trySend(null)
+            return@callbackFlow
+        }
 
-        return try {
-            val querySnapshot = db.collection("transaksi")
-                .whereEqualTo("uid", currentUser.uid)
-                .get().await()
+        val listenerRegistration = db.collection("transaksi")
+            .whereEqualTo("uid", currentUser.uid)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    if (error.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
+                        // Jika ditolak, kirim profil default
+                        trySend(UserProfile(currentUser.email ?: "", 0, 0.0))
+                    } else {
+                        close(error)
+                    }
+                    return@addSnapshotListener
+                }
 
-            val totalPoin = querySnapshot.sumOf { doc ->
-                doc.getLong("totalPoin")?.toInt() ?: 0
+                if (snapshot != null) {
+                    val totalPoin = snapshot.sumOf { doc -> doc.getLong("totalPoin")?.toInt() ?: 0 }
+                    var totalBerat = 0.0
+                    snapshot.forEach { doc ->
+                        val items = doc.get("items") as? List<Map<String, Any>>
+                        items?.forEach { itemMap ->
+                            totalBerat += itemMap["beratKg"] as? Double ?: 0.0
+                        }
+                    }
+                    trySend(UserProfile(currentUser.email ?: "", totalPoin, totalBerat))
+                }
             }
 
-            UserProfile(email, totalPoin)
-        } catch (e: Exception) {
-            UserProfile(email, 0) // Kembalikan 0 jika ada error
-        }
+        awaitClose { listenerRegistration.remove() }
     }
 }

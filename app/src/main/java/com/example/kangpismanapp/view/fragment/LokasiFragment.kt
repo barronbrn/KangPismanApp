@@ -1,60 +1,159 @@
 package com.example.kangpismanapp.view.fragment
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kangpismanapp.R
+import com.example.kangpismanapp.adapter.LokasiAdapter
+import com.example.kangpismanapp.data.model.BankSampah
+import com.example.kangpismanapp.viewmodel.LokasiViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.AndroidEntryPoint
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [LokasiFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private val viewModel: LokasiViewModel by viewModels()
+    private lateinit var mapView: MapView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var lokasiAdapter: LokasiAdapter
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    // Launcher untuk meminta izin lokasi
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                getCurrentLocation()
+            } else {
+                Toast.makeText(requireContext(), "Izin lokasi dibutuhkan untuk menampilkan lokasi terdekat.", Toast.LENGTH_LONG).show()
+            }
+        }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Konfigurasi osmdroid
+        Configuration.getInstance().load(requireContext(), androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()))
+
+        // Inisialisasi FusedLocationProviderClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        mapView = view.findViewById(R.id.map_view)
+        recyclerView = view.findViewById(R.id.recycler_view_lokasi)
+
+        setupRecyclerView()
+        checkLocationPermission()
+    }
+
+    private fun checkLocationPermission() {
+        when {
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
+                getCurrentLocation()
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lokasi, container, false)
-    }
+    private fun getCurrentLocation() {
+        // Tambahkan pengecekan izin di sini untuk "meyakinkan" compiler
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return // Keluar jika izin tidak ada
+        }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment LokasiFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            LokasiFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    observeViewModel(location)
+                } else {
+                    Toast.makeText(requireContext(), "Gagal mendapatkan lokasi. Pastikan GPS aktif.", Toast.LENGTH_LONG).show()
                 }
             }
     }
+
+    private fun observeViewModel(userLocation: Location) {
+        viewModel.bankSampahList.observe(viewLifecycleOwner) { bankList ->
+            if (bankList.isNotEmpty()) {
+                val sortedList = calculateDistancesAndSort(bankList, userLocation)
+                updateUI(sortedList, userLocation)
+            }
+        }
+    }
+
+    private fun calculateDistancesAndSort(bankList: List<BankSampah>, userLocation: Location): List<BankSampah> {
+        bankList.forEach { bank ->
+            val bankLocation = Location("").apply {
+                latitude = bank.lat
+                longitude = bank.lng
+            }
+            bank.jarakInKm = userLocation.distanceTo(bankLocation) / 1000.0
+        }
+        return bankList.sortedBy { it.jarakInKm }
+    }
+
+    private fun updateUI(sortedList: List<BankSampah>, userLocation: Location) {
+        lokasiAdapter.submitList(sortedList)
+        setupMap(sortedList, userLocation)
+    }
+
+    private fun setupMap(sortedList: List<BankSampah>, userLocation: Location) {
+        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        val mapController = mapView.controller
+        mapController.setZoom(14.0)
+
+        val userGeoPoint = GeoPoint(userLocation.latitude, userLocation.longitude)
+        mapController.setCenter(userGeoPoint)
+
+        mapView.overlays.clear() // Bersihkan marker lama sebelum menambah yang baru
+
+        val userMarker = Marker(mapView)
+        userMarker.position = userGeoPoint
+        userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        userMarker.title = "Lokasi Anda"
+        mapView.overlays.add(userMarker)
+
+        sortedList.forEach { bank ->
+            val bankGeoPoint = GeoPoint(bank.lat, bank.lng)
+            val bankMarker = Marker(mapView)
+            bankMarker.position = bankGeoPoint
+            bankMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            bankMarker.title = bank.nama
+            mapView.overlays.add(bankMarker)
+        }
+        mapView.invalidate()
+    }
+
+    private fun setupRecyclerView() {
+        lokasiAdapter = LokasiAdapter()
+        recyclerView.adapter = lokasiAdapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
 }

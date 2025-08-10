@@ -3,10 +3,12 @@ package com.example.kangpismanapp.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.kangpismanapp.R
 import com.example.kangpismanapp.data.model.Sampah
 import java.text.NumberFormat
@@ -26,6 +28,7 @@ class HargaAdapter : ListAdapter<Sampah, HargaAdapter.HargaViewHolder>(SampahDif
     }
 
     class HargaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val imageMaterial: ImageView = itemView.findViewById(R.id.image_material)
         private val namaMaterial: TextView = itemView.findViewById(R.id.text_nama_material)
         private val hargaMaterial: TextView = itemView.findViewById(R.id.text_harga_material)
 
@@ -33,9 +36,14 @@ class HargaAdapter : ListAdapter<Sampah, HargaAdapter.HargaViewHolder>(SampahDif
             namaMaterial.text = sampah.nama
 
             val formatRupiah = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
-
             formatRupiah.maximumFractionDigits = 0
             hargaMaterial.text = "${formatRupiah.format(sampah.harga)}/kg"
+            
+            Glide.with(itemView.context)
+                .load(sampah.imageUrl) // Ambil URL dari data
+                .placeholder(R.drawable.ic_setor_sampah) // Gambar default saat loading
+                .error(R.drawable.ic_setor_sampah) // Gambar default jika error
+                .into(imageMaterial) // Masukkan ke ImageView
         }
     }
 }

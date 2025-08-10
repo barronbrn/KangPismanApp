@@ -1,5 +1,6 @@
 package com.example.kangpismanapp.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +10,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kangpismanapp.R
 import com.example.kangpismanapp.data.model.Transaksi
+import com.example.kangpismanapp.view.activity.DetailTransaksiActivity
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.jvm.java
 
 class TransaksiRingkasAdapter : ListAdapter<Transaksi, TransaksiRingkasAdapter.ViewHolder>(DiffCallback()) {
 
@@ -21,7 +24,17 @@ class TransaksiRingkasAdapter : ListAdapter<Transaksi, TransaksiRingkasAdapter.V
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val transaksi = getItem(position)
+        holder.bind(transaksi)
+
+        // TAMBAHKAN ONCLICKLISTENER DI SINI
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = Intent(context, DetailTransaksiActivity::class.java).apply {
+                putExtra("TRANSACTION_DATA", transaksi) // Kirim seluruh objek transaksi
+            }
+            context.startActivity(intent)
+        }
     }
 
 
