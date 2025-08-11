@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_edukasi"
-    android:layout_width="match_parent"
+    android:id="@+id/main_edukasi" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".view.activity.EdukasiActivity">
@@ -11,7 +10,7 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_edukasi"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="42dp"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:title="Artikel Edukasi" />
 

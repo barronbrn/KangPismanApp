@@ -1,5 +1,6 @@
 package com.example.kangpismanapp.view.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.activity.viewModels
@@ -35,8 +36,13 @@ class EdukasiActivity : AppCompatActivity() {
         val toolbar: MaterialToolbar = findViewById(R.id.toolbar_edukasi)
         toolbar.setNavigationOnClickListener { finish() }
 
+
         recyclerView = findViewById(R.id.recycler_view_edukasi)
-        artikelAdapter = ArtikelAdapter()
+        artikelAdapter = ArtikelAdapter { artikel ->
+            val intent = Intent(this, DetailArtikelActivity::class.java)
+            intent.putExtra("ARTICLE_DATA", artikel)
+            startActivity(intent)
+        }
         recyclerView.adapter = artikelAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 

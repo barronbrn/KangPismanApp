@@ -23,7 +23,7 @@ import java.io.IOException
 @AndroidEntryPoint
 class PetugasHomeFragment : Fragment(R.layout.fragment_petugas_home) {
 
-    // Launcher untuk membuka kamera (ScannerActivity)
+    // Launcher untuk menangani hasil dari ScannerActivity (kamera)
     private val scannerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val draftId = result.data?.getStringExtra("QR_CODE_DATA")
@@ -33,7 +33,7 @@ class PetugasHomeFragment : Fragment(R.layout.fragment_petugas_home) {
         }
     }
 
-    // Launcher BARU untuk memilih gambar dari galeri
+    // Launcher untuk memilih gambar dari galeri
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             scanQrCodeFromUri(it)
@@ -46,13 +46,13 @@ class PetugasHomeFragment : Fragment(R.layout.fragment_petugas_home) {
         val buttonScanLive: Button = view.findViewById(R.id.button_scan_live)
         val buttonScanGallery: Button = view.findViewById(R.id.button_scan_gallery)
 
+        // Atur aksi untuk tombol pindai kamera
         buttonScanLive.setOnClickListener {
-            // Jalankan pemindai kamera langsung
             scannerLauncher.launch(Intent(activity, ScannerActivity::class.java))
         }
 
+        // Atur aksi untuk tombol pindai galeri
         buttonScanGallery.setOnClickListener {
-            // Buka galeri untuk memilih gambar
             galleryLauncher.launch("image/*")
         }
     }
@@ -88,10 +88,10 @@ class PetugasHomeFragment : Fragment(R.layout.fragment_petugas_home) {
         }
     }
 
-    // Fungsi bantuan untuk pindah ke TimbangActivity
+    // Fungsi bantuan untuk pindah ke TimbangActivity sambil mengirim ID draft
     private fun goToTimbangActivity(draftId: String) {
         val intent = Intent(activity, TimbangActivity::class.java)
-        intent.putExtra("DRAFT_ID", draftId) // Kirim ID draft
+        intent.putExtra("DRAFT_ID", draftId)
         startActivity(intent)
     }
 }

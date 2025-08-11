@@ -1,8 +1,10 @@
 package com.example.kangpismanapp.view.fragment
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -16,7 +18,6 @@ import com.example.kangpismanapp.R
 import com.example.kangpismanapp.adapter.LokasiAdapter
 import com.example.kangpismanapp.data.model.BankSampah
 import com.example.kangpismanapp.viewmodel.LokasiViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import org.osmdroid.config.Configuration
@@ -25,6 +26,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
+
 @AndroidEntryPoint
 class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
 
@@ -32,26 +34,16 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
     private lateinit var mapView: MapView
     private lateinit var recyclerView: RecyclerView
     private lateinit var lokasiAdapter: LokasiAdapter
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    // Launcher untuk meminta izin lokasi
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                getCurrentLocation()
-            } else {
-                Toast.makeText(requireContext(), "Izin lokasi dibutuhkan untuk menampilkan lokasi terdekat.", Toast.LENGTH_LONG).show()
-            }
+            if (isGranted) { getCurrentLocation() }
+            else { Toast.makeText(requireContext(), "Izin lokasi dibutuhkan.", Toast.LENGTH_LONG).show() }
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Konfigurasi osmdroid
         Configuration.getInstance().load(requireContext(), androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()))
-
-        // Inisialisasi FusedLocationProviderClient
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         mapView = view.findViewById(R.id.map_view)
         recyclerView = view.findViewById(R.id.recycler_view_lokasi)
@@ -72,20 +64,16 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
     }
 
     private fun getCurrentLocation() {
-        // Tambahkan pengecekan izin di sini untuk "meyakinkan" compiler
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return // Keluar jika izin tidak ada
-        }
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) { return }
 
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                if (location != null) {
-                    observeViewModel(location)
-                } else {
-                    Toast.makeText(requireContext(), "Gagal mendapatkan lokasi. Pastikan GPS aktif.", Toast.LENGTH_LONG).show()
-                }
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                observeViewModel(location)
+            } else {
+                Toast.makeText(requireContext(), "Gagal mendapatkan lokasi. Pastikan GPS aktif.", Toast.LENGTH_LONG).show()
             }
+        }
     }
 
     private fun observeViewModel(userLocation: Location) {
@@ -120,30 +108,50 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
 
         val userGeoPoint = GeoPoint(userLocation.latitude, userLocation.longitude)
         mapController.setCenter(userGeoPoint)
+        mapView.overlays.clear()
 
-        mapView.overlays.clear() // Bersihkan marker lama sebelum menambah yang baru
-
+        // --- PENANDA UNTUK LOKASI PENGGUNA ---
         val userMarker = Marker(mapView)
-        userMarker.position = userGeoPoint
-        userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        userMarker.position = GeoPoint(userLocation.latitude, userLocation.longitude)
+        userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         userMarker.title = "Lokasi Anda"
+        userMarker.icon = ContextCompat.getDrawable(requireContext(), R.drawable.marker_user_location)
         mapView.overlays.add(userMarker)
 
+        // --- PENANDA KUSTOM UNTUK BANK SAMPAH ---
         sortedList.forEach { bank ->
-            val bankGeoPoint = GeoPoint(bank.lat, bank.lng)
             val bankMarker = Marker(mapView)
-            bankMarker.position = bankGeoPoint
+            bankMarker.position = GeoPoint(bank.lat, bank.lng)
             bankMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             bankMarker.title = bank.nama
+            bankMarker.icon = ContextCompat.getDrawable(requireContext(), R.drawable.marker_custom_bank)
+
+            bankMarker.setOnMarkerClickListener { _, _ ->
+                launchNavigation(bank.lat, bank.lng, bank.nama)
+                true
+            }
             mapView.overlays.add(bankMarker)
         }
         mapView.invalidate()
     }
 
     private fun setupRecyclerView() {
-        lokasiAdapter = LokasiAdapter()
+        lokasiAdapter = LokasiAdapter { bankSampah ->
+            launchNavigation(bankSampah.lat, bankSampah.lng, bankSampah.nama)
+        }
         recyclerView.adapter = lokasiAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun launchNavigation(lat: Double, lng: Double, label: String) {
+        val gmmIntentUri = Uri.parse("google.navigation:q=$lat,$lng")
+        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+        mapIntent.setPackage("com.google.android.apps.maps")
+        if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(mapIntent)
+        } else {
+            Toast.makeText(requireContext(), "Google Maps tidak terinstal.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onResume() {
@@ -155,5 +163,4 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
         super.onPause()
         mapView.onPause()
     }
-
 }

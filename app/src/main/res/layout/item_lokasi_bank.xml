@@ -15,11 +15,12 @@
         android:padding="12dp"
         android:gravity="center_vertical">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_bank_sampah"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
             android:src="@drawable/ic_lokasi_bank"/>
 
         <LinearLayout
@@ -41,6 +42,8 @@
                 android:id="@+id/text_alamat_bank_sampah"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:text="Jl. Melati No. 12, Kec. Sukajadi"/>
 
             <TextView

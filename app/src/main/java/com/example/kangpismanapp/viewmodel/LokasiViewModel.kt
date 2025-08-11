@@ -11,7 +11,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LokasiViewModel @Inject constructor(private val repository: LokasiRepository) : ViewModel() {
+class LokasiViewModel @Inject constructor(
+    private val repository: LokasiRepository
+) : ViewModel() {
+
     private val _bankSampahList = MutableLiveData<List<BankSampah>>()
     val bankSampahList: LiveData<List<BankSampah>> = _bankSampahList
 

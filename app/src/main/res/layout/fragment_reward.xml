@@ -7,45 +7,86 @@
     android:orientation="vertical"
     tools:context=".view.fragment.RewardFragment">
 
-
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_reward"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         app:title="Reward &amp; Penukaran"
-        app:titleCentered="true"
-        />
+        app:titleCentered="true" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total Poin Anda"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Poin Anda"
+                android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+            <TextView
+                android:id="@+id/text_total_poin_reward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                tools:text="1,250 pts" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/text_total_poin_reward"
+            android:id="@+id/link_riwayat_penukaran"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadlineLarge"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="Riwayat Penukaran"
             android:textColor="?attr/colorPrimary"
-            android:textStyle="bold"
-            tools:text="1,250 pts" />
-    </LinearLayout>
+            android:textStyle="bold" />
+    </RelativeLayout>
 
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="?attr/colorPrimaryContainer"
+        app:cardCornerRadius="12dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="16dp"
+            android:text="Tukarkan poin Anda dengan reward menarik!"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textStyle="bold" />
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_rewards"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
         android:paddingHorizontal="8dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
+        tools:itemCount="4"
         tools:listitem="@layout/item_reward" />
+
+    <Button
+        android:id="@+id/button_lihat_semua_reward"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Lihat Semua Reward" />
 
 </LinearLayout>

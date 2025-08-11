@@ -19,6 +19,7 @@ import com.example.kangpismanapp.adapter.HargaAdapter
 import com.example.kangpismanapp.adapter.TransaksiRingkasAdapter
 import com.example.kangpismanapp.view.activity.BuatSetoranActivity
 import com.example.kangpismanapp.view.activity.DaftarHargaActivity
+import com.example.kangpismanapp.view.activity.DetailArtikelActivity
 import com.example.kangpismanapp.view.activity.EdukasiActivity
 import com.example.kangpismanapp.viewmodel.EdukasiViewModel
 import com.example.kangpismanapp.viewmodel.HargaViewModel
@@ -104,7 +105,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             profile?.let {
                 val formatRupiah = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
                 formatRupiah.maximumFractionDigits = 0
-                textSaldo.text = formatRupiah.format(it.totalPoin)
+
+                textSaldo.text = formatRupiah.format(it.totalSaldo)
                 textPoin.text = "${it.totalPoin} points"
                 textSampah.text = "%.1f kg".format(it.totalBeratKg)
             }

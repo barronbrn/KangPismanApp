@@ -9,8 +9,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class LokasiRepository @Inject constructor(){
-
+class LokasiRepository @Inject constructor() {
     private val db = Firebase.firestore
 
     suspend fun getBankSampahList(): List<BankSampah> {

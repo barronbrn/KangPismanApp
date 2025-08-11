@@ -15,6 +15,7 @@ import com.example.kangpismanapp.adapter.TimbangAdapter
 import com.example.kangpismanapp.data.model.ItemTransaksi
 import com.example.kangpismanapp.data.model.Sampah
 import com.example.kangpismanapp.data.model.Transaksi
+import com.example.kangpismanapp.viewmodel.ProfileViewModel
 import com.example.kangpismanapp.viewmodel.TimbangViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +26,8 @@ import java.util.Locale
 @AndroidEntryPoint
 class TimbangActivity : AppCompatActivity() {
     private val viewModel: TimbangViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
+    private val timbangViewModel: TimbangViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var timbangAdapter: TimbangAdapter
     private lateinit var textInfoWarga: TextView
@@ -32,6 +35,7 @@ class TimbangActivity : AppCompatActivity() {
     private var currentDraftId: String? = null
     private var daftarMaterialFromDb: List<Sampah> = emptyList()
     private val listTimbangSementara = mutableListOf<ItemTransaksi>()
+    private lateinit var textInfoPetugas: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +55,7 @@ class TimbangActivity : AppCompatActivity() {
 
     private fun setupUI() {
         textInfoWarga = findViewById(R.id.text_info_warga)
+        textInfoPetugas = findViewById(R.id.text_info_petugas)
         buttonSimpan = findViewById(R.id.button_simpan_transaksi)
         recyclerView = findViewById(R.id.recycler_view_timbang)
 
@@ -65,6 +70,14 @@ class TimbangActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
+
+        profileViewModel.userProfile.observe(this) { profile ->
+            profile?.let {
+                // Tampilkan email petugas yang sedang login
+                textInfoPetugas.text = "Dikonfirmasi oleh: ${it.email}"
+            }
+        }
+
         viewModel.daftarMaterial.observe(this) { materials ->
             if (materials.isNotEmpty()) {
                 daftarMaterialFromDb = materials
@@ -91,7 +104,13 @@ class TimbangActivity : AppCompatActivity() {
     private fun processLoadedDraft() {
         val draft = viewModel.draftTransaksi.value
         if (draft != null && daftarMaterialFromDb.isNotEmpty()) {
-            textInfoWarga.text = "Nama: ${draft.wargaUsername}\nUID: ${draft.wargaUid}"
+
+            val infoWarga = """
+                Nama: ${draft.wargaUsername}
+                Alamat: ${draft.wargaAlamat}
+                No. HP: ${draft.wargaNoTelepon}
+            """.trimIndent()
+            textInfoWarga.text = infoWarga
 
             listTimbangSementara.clear()
             draft.items.forEach { draftItem ->
@@ -106,7 +125,6 @@ class TimbangActivity : AppCompatActivity() {
             }
             timbangAdapter.submitList(listTimbangSementara.toList())
             updateTotal()
-            viewModel.clearDraft()
         }
     }
 
@@ -115,7 +133,6 @@ class TimbangActivity : AppCompatActivity() {
         val totalBerat = listTimbangSementara.sumOf { it.beratKg }
         val totalPoin = (totalBerat / 0.5 * 10).toInt()
 
-        // Gunakan variabel 'buttonSimpan' yang sudah dideklarasikan
         buttonSimpan.text = "Konfirmasi Transaksi (Total: $totalPoin Poin)"
     }
 

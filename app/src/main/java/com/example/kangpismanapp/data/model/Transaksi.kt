@@ -10,6 +10,7 @@ data class ItemTransaksi(
     val namaMaterial: String = "",
     val hargaPerKg: Int = 0,
     var beratKg: Double = 0.0,
+    var subtotal: Int = 0
 ) : Parcelable
 
 @Parcelize
@@ -18,5 +19,7 @@ data class Transaksi(
     @ServerTimestamp
     val tanggal: Date? = null,
     val totalPoin: Int = 0,
+    val petugasNama: String = "",
+    val petugasUid: String = "",
     val items: List<ItemTransaksi> = emptyList()
 ) : Parcelable

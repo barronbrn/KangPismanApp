@@ -1,5 +1,6 @@
 package com.example.kangpismanapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,7 +25,9 @@ class RewardViewModel @Inject constructor(
 
     private fun fetchRewards() {
         viewModelScope.launch {
-            _rewardsList.value = repository.getRewards()
+            val data = repository.getRewards()
+            Log.d("REWARD_DEBUG", "ViewModel: Menerima ${data.size} item reward dari Repository.")
+            _rewardsList.value = data
         }
     }
 }

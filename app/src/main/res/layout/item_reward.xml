@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    app:cardCornerRadius="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,8 +15,7 @@
             android:id="@+id/image_reward"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:scaleType="centerCrop"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,28 +27,27 @@
                 android:id="@+id/text_reward_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textStyle="bold"
-                tools:text="Voucher Belanja" />
+                android:text="Voucher Belanja"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/text_reward_points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:text="2.500 pts"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorPrimary"
-                android:textStyle="bold"
-                tools:text="2.500 pts" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/text_reward_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textSize="12sp"
-                tools:text="Rp 50.000 • Selkupon" />
-
+                android:text="Rp 50.000 • Selkupon"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

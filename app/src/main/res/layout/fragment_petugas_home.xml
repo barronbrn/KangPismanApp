@@ -10,7 +10,7 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_petugas"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="42dp"
         app:title="Beranda Petugas"
         app:titleCentered="true" />
 

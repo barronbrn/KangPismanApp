@@ -12,9 +12,11 @@ data class ItemDraft(
 // Model untuk dokumen draft transaksi
 data class DraftTransaksi(
     val wargaUid: String = "",
-    val wargaUsername: String = "", // Simpan nama agar mudah ditampilkan oleh petugas
+    val wargaUsername: String = "",
+    val wargaAlamat: String = "",
+    val wargaNoTelepon: String = "",
     @ServerTimestamp
     val tanggalDibuat: Date? = null,
-    val status: String = "pending", // Status: pending, completed
+    val status: String = "pending",
     val items: List<ItemDraft> = emptyList()
 )

@@ -92,10 +92,6 @@ dependencies {
     // Google Sign-In
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
 
-
-    // OpenStreetMap Library (osmdroid)
-    implementation ("org.osmdroid:osmdroid-android:6.1.18")
-
     // Dependensi untuk PreferenceManager (dibutuhkan oleh osmdroid)
     implementation ("androidx.preference:preference-ktx:1.2.1")
 
@@ -104,6 +100,11 @@ dependencies {
 
     // QR Code Generator (ZXing)
     implementation ("com.google.zxing:core:3.5.1")
+
+
+    // OpenStreetMap Library (osmdroid)
+    implementation ("org.osmdroid:osmdroid-android:6.1.18")
+    implementation ("androidx.preference:preference-ktx:1.2.1")
 
     implementation ("com.google.guava:guava:33.0.0-android")
 

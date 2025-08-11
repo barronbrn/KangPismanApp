@@ -24,8 +24,10 @@ class ArtikelHomeAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val artikel = getItem(position)
-        // 2. Kirim artikel dan fungsi klik ke ViewHolder
         holder.bind(artikel, onItemClick)
+        holder.itemView.setOnClickListener {
+            onItemClick(artikel)
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

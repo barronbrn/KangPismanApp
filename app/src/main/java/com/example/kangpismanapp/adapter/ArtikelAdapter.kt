@@ -12,7 +12,9 @@ import com.bumptech.glide.Glide
 import com.example.kangpismanapp.R
 import com.example.kangpismanapp.data.model.Artikel
 
-class ArtikelAdapter : ListAdapter<Artikel, ArtikelAdapter.ViewHolder>(DiffCallback()) {
+class ArtikelAdapter (
+    private val onItemClick: (Artikel) -> Unit
+) : ListAdapter<Artikel, ArtikelAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -23,6 +25,9 @@ class ArtikelAdapter : ListAdapter<Artikel, ArtikelAdapter.ViewHolder>(DiffCallb
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val artikel = getItem(position)
         holder.bind(artikel)
+        holder.itemView.setOnClickListener {
+            onItemClick(artikel)
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

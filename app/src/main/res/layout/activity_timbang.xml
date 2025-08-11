@@ -38,11 +38,21 @@
 </com.google.android.material.card.MaterialCardView>
 
     <TextView
+        android:id="@+id/text_info_petugas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:textAlignment="textEnd"
+        tools:text="Dikonfirmasi oleh: petugas@gmail.com"/>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:text="Daftar Item Setoran"
+        android:text="Rincian Item Setoran"
         android:textAppearance="?attr/textAppearanceTitleMedium" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_timbang"
@@ -51,6 +61,7 @@
         android:layout_weight="1"
         android:layout_marginTop="8dp"
         tools:listitem="@layout/item_timbang" />
+
 
     <Button
         android:id="@+id/button_simpan_transaksi"
