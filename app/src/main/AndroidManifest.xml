@@ -37,9 +37,6 @@
             android:name=".view.activity.DetailTransaksiActivity"
             android:exported="false" />
         <activity
-            android:name=".view.activity.MainActivity2"
-            android:exported="false" />
-        <activity
             android:name=".view.activity.BuatSetoranActivity"
             android:exported="false" />
         <activity
@@ -72,9 +69,6 @@
             android:exported="false" />
         <activity
             android:name=".view.activity.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.activity.HargaActivity"
             android:exported="false" />
     </application>
 

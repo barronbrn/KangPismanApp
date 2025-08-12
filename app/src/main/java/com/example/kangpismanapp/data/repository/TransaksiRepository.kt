@@ -17,17 +17,38 @@ class TransaksiRepository @Inject constructor() {
     private val db = Firebase.firestore
     private val auth = Firebase.auth
 
-    fun getTransaksiHistory(): Flow<List<Transaksi>> = callbackFlow {
+    fun getTransaksiHistoryForWarga(): Flow<List<Transaksi>> = callbackFlow {
         val uid = auth.currentUser?.uid ?: return@callbackFlow
         val listenerRegistration = db.collection("transaksi")
-            .whereEqualTo("uid", uid)
+            .whereEqualTo("uid", uid) // <-- Mencari berdasarkan UID Warga
             .orderBy("tanggal", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     if (error.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
-                        trySend(emptyList()) // Jika ditolak, kirim list kosong
+                        trySend(emptyList())
                     } else {
-                        close(error) // Untuk error lain, tutup flow
+                        close(error)
+                    }
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    trySend(snapshot.toObjects(Transaksi::class.java))
+                }
+            }
+        awaitClose { listenerRegistration.remove() }
+    }
+
+    fun getTransaksiHistoryForPetugas(): Flow<List<Transaksi>> = callbackFlow {
+        val uid = auth.currentUser?.uid ?: return@callbackFlow
+        val listenerRegistration = db.collection("transaksi")
+            .whereEqualTo("petugasUid", uid) // <-- Mencari berdasarkan UID Petugas
+            .orderBy("tanggal", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    if (error.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
+                        trySend(emptyList())
+                    } else {
+                        close(error)
                     }
                     return@addSnapshotListener
                 }

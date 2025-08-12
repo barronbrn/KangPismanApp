@@ -51,10 +51,9 @@ class TransaksiRingkasAdapter : ListAdapter<Transaksi, TransaksiRingkasAdapter.V
             // Gunakan data dari objek Transaksi, bukan Jadwal
             title.text = "Setoran ${transaksi.items.firstOrNull()?.namaMaterial ?: "Sampah"}"
             date.text = transaksi.tanggal?.let { dateFormat.format(it) } ?: "Tanggal tidak tersedia"
-            amount.text = "+${formatRupiah.format(transaksi.totalPoin)}"
+            amount.text = "+${formatRupiah.format(transaksi.totalRupiah)}"
         }
     }
-    // ------------------------------------
 
     class DiffCallback : DiffUtil.ItemCallback<Transaksi>() {
         override fun areItemsTheSame(oldItem: Transaksi, newItem: Transaksi): Boolean {

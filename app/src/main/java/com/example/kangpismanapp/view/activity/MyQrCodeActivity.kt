@@ -12,8 +12,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.kangpismanapp.R
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.BarcodeFormat
 

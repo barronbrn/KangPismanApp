@@ -19,6 +19,7 @@ data class Transaksi(
     @ServerTimestamp
     val tanggal: Date? = null,
     val totalPoin: Int = 0,
+    val totalRupiah: Int = 0,
     val petugasNama: String = "",
     val petugasUid: String = "",
     val items: List<ItemTransaksi> = emptyList()

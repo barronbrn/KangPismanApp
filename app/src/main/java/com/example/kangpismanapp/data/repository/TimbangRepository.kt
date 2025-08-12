@@ -6,6 +6,9 @@ import com.example.kangpismanapp.data.model.Sampah
 import com.example.kangpismanapp.data.model.Transaksi
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,14 +27,27 @@ class TimbangRepository @Inject constructor() {
         }
     }
 
+    fun getAllPendingDrafts(): Flow<List<DraftTransaksi>> = callbackFlow {
+        val listenerRegistration = db.collection("draft_transaksi")
+            .whereEqualTo("status", "pending")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    val drafts = snapshot.toObjects(DraftTransaksi::class.java)
+                    trySend(drafts)
+                }
+            }
+        awaitClose { listenerRegistration.remove() }
+    }
+
     suspend fun getDaftarMaterial(): List<Sampah> {
         return try {
-            Log.d("BUAT_SETORAN_DEBUG", "Repository: Mengambil daftar material...")
             val querySnapshot = db.collection("harga_material").get().await()
-            Log.d("BUAT_SETORAN_DEBUG", "Repository: Sukses! Ditemukan ${querySnapshot.size()} dokumen material.")
             querySnapshot.toObjects(Sampah::class.java)
         } catch (e: Exception) {
-            Log.e("BUAT_SETORAN_DEBUG", "Repository: Gagal mengambil material!", e)
             emptyList()
         }
     }

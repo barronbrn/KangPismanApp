@@ -53,7 +53,7 @@ class DetailTransaksiActivity : AppCompatActivity() {
             formatRupiah.maximumFractionDigits = 0
 
             textTanggal.text = transaksi.tanggal?.let { dateFormat.format(it) } ?: "Tanggal tidak tersedia"
-            textTotal.text = "Total: ${formatRupiah.format(transaksi.totalPoin)}"
+            textTotal.text = "Total: ${formatRupiah.format(transaksi.totalRupiah)}"
 
             // Tampilkan rincian item di RecyclerView
             val detailAdapter = TimbangAdapter() // Kita bisa gunakan TimbangAdapter karena layout-nya mirip

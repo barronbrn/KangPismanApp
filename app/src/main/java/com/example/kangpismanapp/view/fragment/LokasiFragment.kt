@@ -26,7 +26,6 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
-
 @AndroidEntryPoint
 class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
 
@@ -104,7 +103,7 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
     private fun setupMap(sortedList: List<BankSampah>, userLocation: Location) {
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         val mapController = mapView.controller
-        mapController.setZoom(14.0)
+        mapController.setZoom(13.0)
 
         val userGeoPoint = GeoPoint(userLocation.latitude, userLocation.longitude)
         mapController.setCenter(userGeoPoint)
@@ -112,7 +111,7 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
 
         // --- PENANDA UNTUK LOKASI PENGGUNA ---
         val userMarker = Marker(mapView)
-        userMarker.position = GeoPoint(userLocation.latitude, userLocation.longitude)
+        userMarker.position = userGeoPoint
         userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         userMarker.title = "Lokasi Anda"
         userMarker.icon = ContextCompat.getDrawable(requireContext(), R.drawable.marker_user_location)
@@ -123,12 +122,17 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
             val bankMarker = Marker(mapView)
             bankMarker.position = GeoPoint(bank.lat, bank.lng)
             bankMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            bankMarker.title = bank.nama
             bankMarker.icon = ContextCompat.getDrawable(requireContext(), R.drawable.marker_custom_bank)
 
-            bankMarker.setOnMarkerClickListener { _, _ ->
-                launchNavigation(bank.lat, bank.lng, bank.nama)
-                true
+            // Atur judul dan sub-deskripsi (jarak)
+            bankMarker.title = bank.nama
+            bankMarker.snippet = "%.1f km dari lokasi Anda".format(bank.jarakInKm)
+
+            // Saat pin di peta di-klik, kita hanya pusatkan peta dan tampilkan info
+            bankMarker.setOnMarkerClickListener { marker, _ ->
+                mapView.controller.animateTo(marker.position)
+                marker.showInfoWindow() // Tampilkan gelembung info saat di-klik
+                true // Mengembalikan true menandakan klik sudah ditangani
             }
             mapView.overlays.add(bankMarker)
         }
@@ -150,7 +154,11 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
         if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(mapIntent)
         } else {
-            Toast.makeText(requireContext(), "Google Maps tidak terinstal.", Toast.LENGTH_SHORT).show()
+           val webIntent = Intent (
+               Intent.ACTION_VIEW,
+               Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$label")
+           )
+           startActivity(webIntent)
         }
     }
 

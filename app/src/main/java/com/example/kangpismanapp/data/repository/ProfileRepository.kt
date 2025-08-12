@@ -8,6 +8,7 @@ import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,60 +20,60 @@ class ProfileRepository @Inject constructor() {
     private val auth = Firebase.auth
     private val db = Firebase.firestore
 
-    fun getUserProfileData(): Flow<UserProfile?> = callbackFlow {
+    fun getUserProfileData(): Flow<UserProfile?> {
         val currentUser = auth.currentUser
         if (currentUser == null) {
-            trySend(null)
-            close()
-            return@callbackFlow
+            return callbackFlow { trySend(null); close() }
         }
 
-        val userDocRef = db.collection("users").document(currentUser.uid)
-
-        val listenerRegistration = db.collection("transaksi")
-            .whereEqualTo("uid", currentUser.uid)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    // ... (logika penanganan error tidak berubah) ...
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null) {
-                    // 1. Hitung total poin (seperti sebelumnya)
-                    val totalPoin = snapshot.sumOf { doc -> doc.getLong("totalPoin")?.toInt() ?: 0 }
-
-                    // 2. Hitung total berat DAN total saldo (Rupiah) baru
-                    var totalBerat = 0.0
-                    var totalSaldoRupiah = 0
-                    snapshot.forEach { doc ->
-                        val items = doc.get("items") as? List<Map<String, Any>>
-                        items?.forEach { itemMap ->
-                            val berat = itemMap["beratKg"] as? Double ?: 0.0
-                            val harga = itemMap["hargaPerKg"] as? Long ?: 0L
-                            totalBerat += berat
-                            totalSaldoRupiah += (berat * harga).toInt()
-                        }
-                    }
-
-                    // 3. Ambil data profil lain dan gabungkan semuanya
-                    userDocRef.get().addOnSuccessListener { userDoc ->
-                        val username = userDoc.getString("username") ?: ""
-                        // ... ambil data lain (noTelepon, alamat, imageUrl) ...
-
-                        val fullProfile = UserProfile(
-                            email = currentUser.email ?: "",
-                            username = username,
-                            // ... data lain ...
-                            totalPoin = totalPoin,
-                            totalSaldo = totalSaldoRupiah, // <-- Gunakan total saldo baru
-                            totalBeratKg = totalBerat
-                        )
-                        trySend(fullProfile)
-                    }
+        // 1. Buat Flow untuk mengambil data dari koleksi 'users' secara real-time
+        val userProfileFlow: Flow<UserProfile> = callbackFlow {
+            val userDocRef = db.collection("users").document(currentUser.uid)
+            val listener = userDocRef.addSnapshotListener { snapshot, error ->
+                if (snapshot != null && snapshot.exists()) {
+                    val username = snapshot.getString("username") ?: ""
+                    val noTelepon = snapshot.getString("noTelepon") ?: ""
+                    val alamat = snapshot.getString("alamat") ?: ""
+                    val imageUrl = snapshot.getString("profileImageUrl") ?: ""
+                    trySend(UserProfile(currentUser.email ?: "", username, noTelepon, alamat, imageUrl))
+                } else {
+                    trySend(UserProfile(email = currentUser.email ?: ""))
                 }
             }
+            awaitClose { listener.remove() }
+        }
 
-        awaitClose { listenerRegistration.remove() }
+        // 2. Buat Flow untuk mengambil data dari koleksi 'transaksi' secara real-time
+        val transactionDataFlow: Flow<Triple<Int, Int, Double>> = callbackFlow {
+            val listener = db.collection("transaksi")
+                .whereEqualTo("uid", currentUser.uid)
+                .addSnapshotListener { snapshot, _ ->
+                    if (snapshot != null) {
+                        val totalSaldo = snapshot.sumOf { doc -> doc.getLong("totalRupiah")?.toInt() ?: 0 }
+                        val totalPoin = snapshot.sumOf { doc -> doc.getLong("totalPoin")?.toInt() ?: 0 }
+                        var totalBerat = 0.0
+                        snapshot.forEach { doc ->
+                            val items = doc.get("items") as? List<Map<String, Any>>
+                            items?.forEach { itemMap ->
+                                totalBerat += itemMap["beratKg"] as? Double ?: 0.0
+                            }
+                        }
+                        trySend(Triple(totalSaldo, totalPoin, totalBerat))
+                    } else {
+                        trySend(Triple(0, 0, 0.0))
+                    }
+                }
+            awaitClose { listener.remove() }
+        }
+
+        // 3. Gabungkan kedua hasil Flow menjadi satu
+        return userProfileFlow.combine(transactionDataFlow) { profile, transactionData ->
+            profile.copy(
+                totalSaldo = transactionData.first,
+                totalPoin = transactionData.second,
+                totalBeratKg = transactionData.third
+            )
+        }
     }
 
     suspend fun updateUserProfile(username: String, noTelepon: String, alamat: String): Boolean {
@@ -82,13 +83,23 @@ class ProfileRepository @Inject constructor() {
             val userUpdates = mapOf(
                 "username" to username,
                 "noTelepon" to noTelepon,
-                "alamat" to alamat
+                "alamat" to alamat,
+
             )
             // Panggil fungsi update dari Firestore
             db.collection("users").document(uid).update(userUpdates).await()
             true // Kembalikan true jika sukses
         } catch (e: Exception) {
             false // Kembalikan false jika gagal
+        }
+    }
+
+    suspend fun getUserRole(): String? {
+        val uid = auth.currentUser?.uid ?: return null
+        return try {
+            db.collection("users").document(uid).get().await().getString("role")
+        } catch (e: Exception) {
+            null
         }
     }
 }

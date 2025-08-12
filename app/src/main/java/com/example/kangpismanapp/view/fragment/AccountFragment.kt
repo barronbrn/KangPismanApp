@@ -36,9 +36,12 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
     private lateinit var textDetailNama: TextView
     private lateinit var textDetailEmail: TextView
     private lateinit var imageProfile: ImageView
+    private lateinit var textDetailTelepon: TextView
+    private lateinit var textDetailAlamat: TextView
     private lateinit var buttonLogout: Button
     private lateinit var buttonPengaturanAkun: TextView
     private lateinit var buttonEditProfileImage: ImageView
+
     private var currentUserProfile: UserProfile? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,6 +56,8 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
         buttonLogout = view.findViewById(R.id.buttonLogout)
         buttonPengaturanAkun = view.findViewById(R.id.button_pengaturan_akun)
         buttonEditProfileImage = view.findViewById(R.id.button_edit_profile_image)
+        textDetailTelepon = view.findViewById(R.id.text_detail_telepon)
+        textDetailAlamat = view.findViewById(R.id.text_detail_alamat)
 
         setupListeners()
         observeViewModel()
@@ -88,6 +93,8 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
                 textProfileName.text = it.username
                 textDetailNama.text = it.username
                 textDetailEmail.text = it.email
+                textDetailTelepon.text = it.noTelepon
+                textDetailAlamat.text = it.alamat
 
                 // Untuk sementara, teks ini kita buat statis
                 textMemberSince.text = "Member Sejak 2025"

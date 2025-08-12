@@ -13,7 +13,9 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TransaksiAdapter : ListAdapter<Transaksi, TransaksiAdapter.ViewHolder>(DiffCallback()) {
+class TransaksiAdapter(
+    private val onItemClick: (Transaksi) -> Unit
+) : ListAdapter<Transaksi, TransaksiAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_transaksi_history, parent, false)
@@ -21,7 +23,10 @@ class TransaksiAdapter : ListAdapter<Transaksi, TransaksiAdapter.ViewHolder>(Dif
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val transaksi = getItem(position)
+        holder.bind(transaksi)
         holder.bind(getItem(position))
+        holder.itemView.setOnClickListener { onItemClick(getItem(position)) }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,7 +41,7 @@ class TransaksiAdapter : ListAdapter<Transaksi, TransaksiAdapter.ViewHolder>(Dif
             val itemCount = transaksi.items.size
             title.text = "Transaksi dengan $itemCount item"
             date.text = transaksi.tanggal?.let { dateFormat.format(it) } ?: "Tanggal tidak tersedia"
-            amount.text = "+${formatRupiah.format(transaksi.totalPoin)}"
+            amount.text = "+${formatRupiah.format(transaksi.totalRupiah)}"
         }
     }
 

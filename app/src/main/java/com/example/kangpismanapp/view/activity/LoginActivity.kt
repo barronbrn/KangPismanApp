@@ -124,7 +124,6 @@ class LoginActivity : AppCompatActivity() {
                         // Panggil fungsi pengecekan yang sama dengan Login Google
                         checkUserRoleAndRedirect(user)
                     } else {
-                        // Kasus langka, tapi baik untuk ditangani
                         Toast.makeText(baseContext, "Gagal mendapatkan data pengguna.", Toast.LENGTH_SHORT).show()
                     }
                 }

@@ -18,6 +18,9 @@ import com.example.kangpismanapp.data.model.Transaksi
 import com.example.kangpismanapp.viewmodel.ProfileViewModel
 import com.example.kangpismanapp.viewmodel.TimbangViewModel
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.util.Locale
@@ -74,7 +77,7 @@ class TimbangActivity : AppCompatActivity() {
         profileViewModel.userProfile.observe(this) { profile ->
             profile?.let {
                 // Tampilkan email petugas yang sedang login
-                textInfoPetugas.text = "Dikonfirmasi oleh: ${it.email}"
+                textInfoPetugas.text = "Dikonfirmasi oleh: ${it.username}"
             }
         }
 
@@ -142,22 +145,44 @@ class TimbangActivity : AppCompatActivity() {
             return
         }
 
-        val wargaUid = viewModel.draftTransaksi.value?.wargaUid
+        val draft = viewModel.draftTransaksi.value
+        val wargaUid = draft?.wargaUid
         if (wargaUid == null) {
             Toast.makeText(this, "ID Warga tidak ditemukan. Coba pindai ulang.", Toast.LENGTH_SHORT).show()
             return
         }
 
+        // --- LOGIKA PERHITUNGAN BARU ---
+        // Hitung subtotal untuk setiap item (berat x harga)
+        listTimbangSementara.forEach { it.subtotal = (it.beratKg * it.hargaPerKg).toInt() }
+
+        // Hitung total nilai dalam Rupiah
+        val totalRupiah = listTimbangSementara.sumOf { it.subtotal }
+
+        // Hitung total poin berdasarkan berat
         val totalBerat = listTimbangSementara.sumOf { it.beratKg }
         val totalPoin = (totalBerat / 0.5 * 10).toInt()
+        // --------------------------------
 
-        val newTransaction = Transaksi(
-            uid = wargaUid,
-            totalPoin = totalPoin,
-            items = listTimbangSementara
-        )
+        val petugas = Firebase.auth.currentUser ?: return
+        Firebase.firestore.collection("users").document(petugas.uid).get()
+            .addOnSuccessListener { userDoc ->
+                val petugasNama = userDoc.getString("username") ?: "Petugas"
 
-        viewModel.simpanTransaksi(newTransaction)
-        currentDraftId?.let { viewModel.updateDraftStatus(it, "completed") }
+                val newTransaction = Transaksi(
+                    uid = wargaUid,
+                    totalPoin = totalPoin,       // Simpan total poin
+                    totalRupiah = totalRupiah,   // Simpan total Rupiah
+                    items = listTimbangSementara,
+                    petugasUid = petugas.uid,
+                    petugasNama = petugasNama
+                )
+
+                viewModel.simpanTransaksi(newTransaction)
+                currentDraftId?.let { viewModel.updateDraftStatus(it, "completed") }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Gagal mengambil data petugas.", Toast.LENGTH_SHORT).show()
+            }
     }
 }

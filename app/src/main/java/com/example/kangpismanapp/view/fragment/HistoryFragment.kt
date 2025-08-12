@@ -1,5 +1,6 @@
 package com.example.kangpismanapp.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.kangpismanapp.R
 import com.example.kangpismanapp.adapter.TransaksiAdapter
 import com.example.kangpismanapp.util.DialogUtils
+import com.example.kangpismanapp.view.activity.DetailTransaksiActivity
 import com.example.kangpismanapp.viewmodel.TransaksiViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,9 +37,15 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
     }
 
     private fun setupRecyclerView() {
-        transaksiAdapter = TransaksiAdapter() // PERUBAHAN 3: Inisialisasi adapter yang benar
+        // Buat adapter sambil memberikan aksi klik
+        transaksiAdapter = TransaksiAdapter { transaksi ->
+            // Buka halaman detail saat item diklik
+            val intent = Intent(activity, DetailTransaksiActivity::class.java)
+            intent.putExtra("TRANSACTION_DATA", transaksi)
+            startActivity(intent)
+        }
         recyclerView.apply {
-            adapter = transaksiAdapter // PERUBAHAN 4: Set adapter yang benar
+            adapter = transaksiAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
