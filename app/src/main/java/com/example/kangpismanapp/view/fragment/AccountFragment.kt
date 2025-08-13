@@ -15,8 +15,10 @@ import com.bumptech.glide.Glide
 import com.example.kangpismanapp.R
 import com.example.kangpismanapp.data.model.UserProfile
 import com.example.kangpismanapp.util.DialogUtils
+import com.example.kangpismanapp.view.activity.BantuanActivity
 import com.example.kangpismanapp.view.activity.EditProfileActivity
 import com.example.kangpismanapp.view.activity.LoginActivity
+import com.example.kangpismanapp.view.activity.UbahPasswordActivity
 import com.example.kangpismanapp.viewmodel.ProfileViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.Firebase
@@ -29,20 +31,21 @@ import java.util.Locale
 class AccountFragment : Fragment(R.layout.fragment_account) {
 
     private val viewModel: ProfileViewModel by viewModels()
+    private var currentUserProfile: UserProfile? = null
 
     // Deklarasi komponen UI
     private lateinit var textProfileName: TextView
     private lateinit var textMemberSince: TextView
+    private lateinit var imageProfile: ImageView
     private lateinit var textDetailNama: TextView
     private lateinit var textDetailEmail: TextView
-    private lateinit var imageProfile: ImageView
     private lateinit var textDetailTelepon: TextView
     private lateinit var textDetailAlamat: TextView
-    private lateinit var buttonLogout: Button
-    private lateinit var buttonPengaturanAkun: TextView
     private lateinit var buttonEditProfileImage: ImageView
-
-    private var currentUserProfile: UserProfile? = null
+    private lateinit var buttonEditProfil: TextView
+    private lateinit var buttonUbahPassword: TextView
+    private lateinit var buttonBantuan: TextView
+    private lateinit var buttonLogout: Button
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,14 +53,16 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
         // Inisialisasi semua komponen UI dari layout
         textProfileName = view.findViewById(R.id.text_profile_name)
         textMemberSince = view.findViewById(R.id.text_member_since)
+        imageProfile = view.findViewById(R.id.image_profile)
         textDetailNama = view.findViewById(R.id.text_detail_nama)
         textDetailEmail = view.findViewById(R.id.text_detail_email)
-        imageProfile = view.findViewById(R.id.image_profile)
-        buttonLogout = view.findViewById(R.id.buttonLogout)
-        buttonPengaturanAkun = view.findViewById(R.id.button_pengaturan_akun)
-        buttonEditProfileImage = view.findViewById(R.id.button_edit_profile_image)
         textDetailTelepon = view.findViewById(R.id.text_detail_telepon)
         textDetailAlamat = view.findViewById(R.id.text_detail_alamat)
+        buttonEditProfileImage = view.findViewById(R.id.button_edit_profile_image)
+        buttonEditProfil = view.findViewById(R.id.button_edit_profil)
+        buttonUbahPassword = view.findViewById(R.id.button_ubah_password)
+        buttonBantuan = view.findViewById(R.id.button_bantuan)
+        buttonLogout = view.findViewById(R.id.buttonLogout)
 
         setupListeners()
         observeViewModel()
@@ -73,7 +78,7 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
             startActivity(intent)
         }
 
-        buttonPengaturanAkun.setOnClickListener {
+        buttonEditProfil.setOnClickListener {
             currentUserProfile?.let {
                 val intent = Intent(activity, EditProfileActivity::class.java)
                 intent.putExtra("USER_PROFILE_DATA", it)
@@ -81,23 +86,31 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
             }
         }
 
+        buttonUbahPassword.setOnClickListener {
+            startActivity(Intent(activity, UbahPasswordActivity::class.java))
+        }
+
         buttonEditProfileImage.setOnClickListener {
             Toast.makeText(requireContext(), "Fitur ubah foto profil akan segera hadir!", Toast.LENGTH_SHORT).show()
+        }
+
+        buttonBantuan.setOnClickListener {
+            startActivity(Intent(activity, BantuanActivity::class.java))
         }
     }
 
     private fun observeViewModel() {
         viewModel.userProfile.observe(viewLifecycleOwner) { profile ->
-            currentUserProfile = profile // Simpan data profil saat tiba
+            currentUserProfile = profile
             profile?.let {
-                textProfileName.text = it.username
+                // Penempatan data yang benar
+                textProfileName.text = it.namaLengkap
                 textDetailNama.text = it.username
                 textDetailEmail.text = it.email
                 textDetailTelepon.text = it.noTelepon
                 textDetailAlamat.text = it.alamat
 
-                // Untuk sementara, teks ini kita buat statis
-                textMemberSince.text = "Member Sejak 2025"
+                textMemberSince.text = "Member Sejak 2025" // Contoh
 
                 Glide.with(this)
                     .load(it.profileImageUrl)

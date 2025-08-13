@@ -15,10 +15,14 @@ class ProfileViewModel @Inject constructor(
     private val repository: ProfileRepository
 ) : ViewModel() {
     val userProfile: LiveData<UserProfile?> = repository.getUserProfileData().asLiveData()
-    fun updateUserProfile(username: String, noTelepon: String, alamat: String) {
+    fun updateUserProfile(
+        namaLengkap: String,
+        username: String,
+        noTelepon: String,
+        alamat: String
+    ) {
         viewModelScope.launch {
-            // Panggil fungsi di repository untuk memperbarui data
-            repository.updateUserProfile(username, noTelepon, alamat)
+            repository.updateUserProfile(namaLengkap, username, noTelepon, alamat)
         }
     }
 }

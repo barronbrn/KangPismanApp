@@ -76,6 +76,9 @@ class LokasiFragment : Fragment(R.layout.fragment_lokasi) {
     }
 
     private fun observeViewModel(userLocation: Location) {
+        if (!isAdded || view == null) {
+            return
+        }
         viewModel.bankSampahList.observe(viewLifecycleOwner) { bankList ->
             if (bankList.isNotEmpty()) {
                 val sortedList = calculateDistancesAndSort(bankList, userLocation)

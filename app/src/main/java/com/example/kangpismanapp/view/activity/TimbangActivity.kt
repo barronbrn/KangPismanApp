@@ -30,7 +30,6 @@ import java.util.Locale
 class TimbangActivity : AppCompatActivity() {
     private val viewModel: TimbangViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
-    private val timbangViewModel: TimbangViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var timbangAdapter: TimbangAdapter
     private lateinit var textInfoWarga: TextView

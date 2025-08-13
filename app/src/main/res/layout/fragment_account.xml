@@ -10,7 +10,7 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_account"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="42dp"
         app:title="Akun Saya"
         app:titleCentered="true" />
 
@@ -27,7 +27,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/gradient_summary_card"
                 android:gravity="center_vertical"
+                android:padding="16dp"
                 android:orientation="horizontal">
                 <FrameLayout
                     android:layout_width="wrap_content"
@@ -60,6 +62,7 @@
                         android:id="@+id/text_profile_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/cardview_light_background"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
                         android:textStyle="bold"
                         tools:text="Dani Herawan" />
@@ -67,7 +70,8 @@
                         android:id="@+id/text_member_since"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Member sejak Juni 2025" />
+                        android:textColor="@color/cardview_light_background"
+                        tools:text="Member sejak 2025" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -87,66 +91,95 @@
                         android:text="Profil Saya"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textStyle="bold" />
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Nama Lengkap"/>
+                        android:text="Username" />
                     <TextView
                         android:id="@+id/text_detail_nama"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Dani Herawan"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        tools:text="Dani Herawan" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Email"/>
+                        android:text="Email" />
+
                     <TextView
                         android:id="@+id/text_detail_email"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="qwebaron7@gmail.com"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        tools:text="qwebaron7@gmail.com" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="No. Telepon"/>
+                        android:text="No. Telepon" />
+
                     <TextView
                         android:id="@+id/text_detail_telepon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="081234567890"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        tools:text="081234567890" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Alamat"/>
+                        android:text="Alamat" />
+
                     <TextView
                         android:id="@+id/text_detail_alamat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Jl. Merdeka No. 45, Bandung"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        tools:text="Jl. Merdeka No. 45, Bandung" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:id="@+id/button_pengaturan_akun"
-                style="@style/SettingsButtonStyle"
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Pengaturan Akun" />
+                app:cardCornerRadius="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pengaturan Akun"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/button_edit_profil"
+                        style="@style/SettingsButtonStyle"
+                        android:layout_marginTop="8dp"
+                        android:text="Edit Profil" />
+
+                    <TextView
+                        android:id="@+id/button_ubah_password"
+                        style="@style/SettingsButtonStyle"
+                        android:text="Ubah Password" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
             <TextView
                 android:id="@+id/button_bantuan"
                 style="@style/SettingsButtonStyle"

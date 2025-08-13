@@ -29,14 +29,16 @@ class ProfileRepository @Inject constructor() {
         // 1. Buat Flow untuk mengambil data dari koleksi 'users' secara real-time
         val userProfileFlow: Flow<UserProfile> = callbackFlow {
             val userDocRef = db.collection("users").document(currentUser.uid)
-            val listener = userDocRef.addSnapshotListener { snapshot, error ->
+            val listener = userDocRef.addSnapshotListener { snapshot, _ ->
                 if (snapshot != null && snapshot.exists()) {
+                    val namaLengkap = snapshot.getString("namaLengkap") ?: ""
                     val username = snapshot.getString("username") ?: ""
                     val noTelepon = snapshot.getString("noTelepon") ?: ""
                     val alamat = snapshot.getString("alamat") ?: ""
                     val imageUrl = snapshot.getString("profileImageUrl") ?: ""
                     trySend(UserProfile(currentUser.email ?: "", username, noTelepon, alamat, imageUrl))
                 } else {
+                    // Kirim profil dasar jika dokumen belum ada
                     trySend(UserProfile(email = currentUser.email ?: ""))
                 }
             }
@@ -60,6 +62,7 @@ class ProfileRepository @Inject constructor() {
                         }
                         trySend(Triple(totalSaldo, totalPoin, totalBerat))
                     } else {
+                        // Kirim nilai nol jika tidak ada transaksi
                         trySend(Triple(0, 0, 0.0))
                     }
                 }
@@ -76,21 +79,24 @@ class ProfileRepository @Inject constructor() {
         }
     }
 
-    suspend fun updateUserProfile(username: String, noTelepon: String, alamat: String): Boolean {
-        val uid = auth.currentUser?.uid ?: return false // Hentikan jika pengguna tidak login
+    suspend fun updateUserProfile(
+        namaLengkap: String,
+        username: String,
+        noTelepon: String,
+        alamat: String
+    ): Boolean {
+        val uid = auth.currentUser?.uid ?: return false
         return try {
-            // Buat map hanya untuk data yang akan di-update
             val userUpdates = mapOf(
+                "namaLengkap" to namaLengkap,
                 "username" to username,
                 "noTelepon" to noTelepon,
-                "alamat" to alamat,
-
+                "alamat" to alamat
             )
-            // Panggil fungsi update dari Firestore
             db.collection("users").document(uid).update(userUpdates).await()
-            true // Kembalikan true jika sukses
+            true
         } catch (e: Exception) {
-            false // Kembalikan false jika gagal
+            false
         }
     }
 

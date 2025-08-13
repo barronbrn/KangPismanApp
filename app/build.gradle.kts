@@ -82,6 +82,8 @@ dependencies {
 
     // ML Kit Barcode Scanning
     implementation ("com.google.mlkit:barcode-scanning:17.2.0")
+    // QR Code Generator (ZXing)
+    implementation ("com.google.zxing:core:3.5.1")
 
     // CameraX untuk mempermudah manajemen kamera
     implementation ("androidx.camera:camera-core:1.3.4")
@@ -97,10 +99,6 @@ dependencies {
 
     // Google Play Services untuk mendapatkan lokasi pengguna
     implementation ("com.google.android.gms:play-services-location:21.3.0")
-
-    // QR Code Generator (ZXing)
-    implementation ("com.google.zxing:core:3.5.1")
-
 
     // OpenStreetMap Library (osmdroid)
     implementation ("org.osmdroid:osmdroid-android:6.1.18")

@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
     <uses-feature android:name="android.hardware.camera.any" />
 
     <application
@@ -21,6 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KangPismanApp"
         tools:targetApi="31">
+        <activity
+            android:name=".view.activity.BantuanActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.activity.UbahPasswordActivity"
+            android:exported="false" />
         <activity
             android:name=".view.activity.EditProfileActivity"
             android:exported="false" />

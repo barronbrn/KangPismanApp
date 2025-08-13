@@ -12,6 +12,7 @@ import com.example.kangpismanapp.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
@@ -19,42 +20,43 @@ class RegisterActivity : AppCompatActivity() {
     // Deklarasikan variabel untuk Firebase Auth dan komponen UI
     private lateinit var auth: FirebaseAuth
     private lateinit var editTextEmail: EditText
-    private lateinit var editTextPword: EditText
+    private lateinit var editTextPassword: EditText
     private lateinit var buttonRegister: Button
     private lateinit var textViewToLogin: TextView
     private lateinit var editTextUsername: TextInputEditText
+    private lateinit var editTextNamaLengkap: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        // Inisialisasi Firebase Auth
         auth = Firebase.auth
-
-        // Hubungkan variabel dengan komponen UI dari layout XML
         editTextEmail = findViewById(R.id.editTextEmail)
-        editTextPword = findViewById(R.id.editTextPassword)
+        editTextPassword = findViewById(R.id.editTextPassword)
         buttonRegister = findViewById(R.id.buttonRegister)
         textViewToLogin = findViewById(R.id.textViewToLogin)
         editTextUsername = findViewById(R.id.editTextUsername)
+        editTextNamaLengkap = findViewById(R.id.editTextNamaLengkap)
 
-        // Atur aksi ketika tombol "Daftar" ditekan
         buttonRegister.setOnClickListener {
             registerUser()
         }
 
-        // Atur aksi ketika teks "Masuk di sini" ditekan
         textViewToLogin.setOnClickListener {
-            // Pindah ke LoginActivity
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 
     private fun registerUser() {
-        val email = editTextEmail.text.toString().trim()
-        val password = editTextPword.text.toString().trim()
+        val namaLengkap = editTextNamaLengkap.text.toString().trim()
         val username = editTextUsername.text.toString().trim()
+        val email = editTextEmail.text.toString().trim()
+        val password = editTextPassword.text.toString().trim()
+
+        if (namaLengkap.isEmpty()) {
+            editTextNamaLengkap.error = "Nama lengkap tidak boleh kosong"
+            return
+        }
 
         if (username.isEmpty()) {
             editTextUsername.error = "Username tidak boleh kosong"
@@ -69,8 +71,8 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if (password.isEmpty()) {
-            editTextPword.error = "Password tidak boleh kosong"
-            editTextPword.requestFocus()
+            editTextPassword.error = "Password tidak boleh kosong"
+            editTextPassword.requestFocus()
             return
         }
 
@@ -80,37 +82,21 @@ class RegisterActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Jika pendaftaran di Auth berhasil, dapatkan info user
-                    val user = auth.currentUser
-                    if (user != null) {
-                        // Panggil untuk menyimpan data username ke Firestore
-                        saveUserInfoToFirestore(user.uid, user.email ?: "", username)
-                    } else {
-                        // Penanganan jika user tiba-tiba null
-                        Toast.makeText(baseContext, "Gagal mendapatkan data pengguna.", Toast.LENGTH_SHORT).show()
+                    // Jika pendaftaran berhasil, JANGAN simpan data di sini.
+                    // Pindah ke halaman PilihPeran sambil membawa data.
+                    Toast.makeText(this, "Akun berhasil dibuat. Silakan pilih peran Anda.", Toast.LENGTH_SHORT).show()
+
+                    val intent = Intent(this, PilihPeranActivity::class.java).apply {
+                        putExtra("NAMA_LENGKAP", namaLengkap)
+                        putExtra("USERNAME", username)
                     }
+                    startActivity(intent)
+                    finish()
+
+                } else {
+                    Toast.makeText(baseContext, "Registrasi gagal: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                 }
             }
     }
 
-    private fun saveUserInfoToFirestore(uid: String, email: String, username: String) {
-        val user = mapOf(
-            "uid" to uid,
-            "email" to email,
-            "username" to username
-        )
-
-        Firebase.firestore.collection("users").document(uid)
-            .set(user)
-            .addOnSuccessListener {
-                Log.d("RegisterActivity", "User info saved successfully")
-                // Pindah ke Login setelah info dasar disimpan
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(baseContext, "Gagal menyimpan data pengguna: ${e.message}", Toast.LENGTH_LONG).show()
-            }
-    }
 }

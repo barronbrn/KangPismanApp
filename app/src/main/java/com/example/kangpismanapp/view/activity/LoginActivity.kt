@@ -20,6 +20,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
@@ -29,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
     // Deklarasi variabel
     private lateinit var auth: FirebaseAuth
     private lateinit var editTextEmail: EditText
-    private lateinit var editTextPword: EditText
+    private lateinit var editTextPassword: EditText
     private lateinit var buttonLogin: Button
     private lateinit var textViewToRegister: TextView
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -49,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
         // Inisialisasi Firebase Auth
         auth = Firebase.auth
         editTextEmail = findViewById(R.id.editTextEmail)
-        editTextPword = findViewById(R.id.editTextPassword)
+        editTextPassword = findViewById(R.id.editTextPassword)
         buttonLogin = findViewById(R.id.buttonLogin)
         textViewToRegister = findViewById(R.id.textViewToRegister)
 
@@ -98,33 +100,35 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser() {
         val email = editTextEmail.text.toString().trim()
-        val password = editTextPword.text.toString().trim()
+        val password = editTextPassword.text.toString().trim()
 
-        // Validasi input
-        if (email.isEmpty()) {
-            editTextEmail.error = "Email tidak boleh kosong"
-            editTextEmail.requestFocus()
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Email dan password tidak boleh kosong.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        if (password.isEmpty()) {
-            editTextPword.error = "Password tidak boleh kosong"
-            editTextPword.requestFocus()
-            return
-        }
-
-        Toast.makeText(this, "Mencoba masuk...", Toast.LENGTH_SHORT).show()
-
-        // Gunakan Firebase Auth untuk memverifikasi pengguna
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    // Jika login berhasil, periksa peran pengguna
                     val user = auth.currentUser
                     if (user != null) {
-                        // Panggil fungsi pengecekan yang sama dengan Login Google
                         checkUserRoleAndRedirect(user)
-                    } else {
-                        Toast.makeText(baseContext, "Gagal mendapatkan data pengguna.", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // --- INI BAGIAN YANG DIPERBARUI ---
+                    // Tangani error login
+                    try {
+                        throw task.exception!!
+                    } catch (e: FirebaseAuthInvalidUserException) {
+                        // Error: Email tidak terdaftar
+                        Toast.makeText(baseContext, "Email tidak terdaftar.", Toast.LENGTH_SHORT).show()
+                    } catch (e: FirebaseAuthInvalidCredentialsException) {
+                        // Error: Password salah
+                        Toast.makeText(baseContext, "Password salah. Silakan coba lagi.", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        // Error umum lainnya
+                        Toast.makeText(baseContext, "Login gagal: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
             }
