@@ -185,11 +185,20 @@
                 style="@style/SettingsButtonStyle"
                 android:text="Bantuan &amp; Dukungan" />
 
+            <TextView
+                android:id="@+id/text_app_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                tools:text="Versi 1.0.0" />
+
             <Button
                 android:id="@+id/buttonLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:text="Logout" />
 
         </LinearLayout>

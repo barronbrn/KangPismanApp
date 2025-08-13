@@ -1,5 +1,6 @@
 package com.example.kangpismanapp.data.repository
 
+import android.net.Uri
 import com.example.kangpismanapp.data.model.UserProfile
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -36,7 +37,7 @@ class ProfileRepository @Inject constructor() {
                     val noTelepon = snapshot.getString("noTelepon") ?: ""
                     val alamat = snapshot.getString("alamat") ?: ""
                     val imageUrl = snapshot.getString("profileImageUrl") ?: ""
-                    trySend(UserProfile(currentUser.email ?: "", username, noTelepon, alamat, imageUrl))
+                    trySend(UserProfile(currentUser.email ?: "", username, namaLengkap, noTelepon, alamat, imageUrl))
                 } else {
                     // Kirim profil dasar jika dokumen belum ada
                     trySend(UserProfile(email = currentUser.email ?: ""))
@@ -108,4 +109,5 @@ class ProfileRepository @Inject constructor() {
             null
         }
     }
+
 }

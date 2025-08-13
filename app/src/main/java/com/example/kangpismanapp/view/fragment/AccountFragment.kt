@@ -46,6 +46,7 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
     private lateinit var buttonUbahPassword: TextView
     private lateinit var buttonBantuan: TextView
     private lateinit var buttonLogout: Button
+    private lateinit var textAppVersion: TextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,9 +64,11 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
         buttonUbahPassword = view.findViewById(R.id.button_ubah_password)
         buttonBantuan = view.findViewById(R.id.button_bantuan)
         buttonLogout = view.findViewById(R.id.buttonLogout)
+        textAppVersion = view.findViewById(R.id.text_app_version)
 
         setupListeners()
         observeViewModel()
+        setAppVersion()
     }
 
     private fun setupListeners() {
@@ -119,6 +122,18 @@ class AccountFragment : Fragment(R.layout.fragment_account) {
                     .circleCrop()
                     .into(imageProfile)
             }
+        }
+    }
+
+    private fun setAppVersion() {
+        try {
+            val packageInfo = requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0)
+            val versionName = packageInfo.versionName
+            textAppVersion.text = "Versi $versionName"
+        } catch (e: Exception) {
+            // Tangani jika terjadi error (jarang terjadi)
+            textAppVersion.visibility = View.GONE
+            e.printStackTrace()
         }
     }
 }
